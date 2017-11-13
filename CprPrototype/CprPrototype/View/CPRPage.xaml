@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CprPrototype.View.CPRPage"
+             Title="CPR">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="{Binding CurrentPosition.Name}"
+                VerticalOptions="Start" 
+                HorizontalOptions="CenterAndExpand"
+                Margin="10,20,10,5"
+                FontSize="Large"
+                TextColor="Black"/>
+            <Label Text="{Binding CurrentPosition.Description}"
+                VerticalOptions="Start" 
+                HorizontalOptions="CenterAndExpand"
+                Margin="5"
+                FontSize="Default"/>
+            <Button x:Name="btnShockable"
+                    Text="Shockable"
+                    Margin="20,40,20,0"
+                    HeightRequest="80"
+                    Clicked="ShockableButton_Clicked"/>
+            <Button x:Name="btnNShockable"
+                    Text="Non-Shockable"
+                    Margin="20,10,20,0"
+                    HeightRequest="80"
+                    Clicked="NShockableButton_Clicked"/>
+            <Button x:Name="btnNextStep"
+                    Text="Next Step"
+                    Margin="20,0,20,20"
+                    VerticalOptions="EndAndExpand"
+                    Clicked="NextStepButton_Clicked"
+                    IsVisible="False" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

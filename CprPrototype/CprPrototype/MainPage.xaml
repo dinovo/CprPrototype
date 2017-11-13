@@ -16,8 +16,9 @@
                    Margin="20"
                    FontSize="Medium"/>
             <Button Text="Silent"
-                    />
-            <Button Text="Sound"/>
+                    Clicked="SilentButton_Clicked" />
+            <Button Text="Sound"
+                    Clicked="SoundButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>
