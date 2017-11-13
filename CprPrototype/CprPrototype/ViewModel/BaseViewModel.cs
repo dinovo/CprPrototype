@@ -25,6 +25,8 @@ namespace CprPrototype.ViewModel
         private AlgorithmStep currStep;
         private TimeSpan totalTime, stepTime;
 
+        
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         // Shared Bindable properties for our views
