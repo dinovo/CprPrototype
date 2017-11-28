@@ -20,7 +20,15 @@ namespace CprPrototype
         /// <param name="e">Args</param>
         private void SilentButton_Clicked(object sender, EventArgs e)
         {
-            BaseViewModel.Instance().Mode = InteractionMode.Silent;
+            if(swSoundMode.IsToggled)
+            {
+                BaseViewModel.Instance().Mode = InteractionMode.Sound;
+            }
+            else
+            {
+                BaseViewModel.Instance().Mode = InteractionMode.Silent;
+            }
+            BaseViewModel.Instance().InitAlgorithmBase(StepSize.Small);
             Application.Current.MainPage = new MasterTabbedPage();
         }
 
@@ -31,7 +39,15 @@ namespace CprPrototype
         /// <param name="e"></param>
         private void SoundButton_Clicked(object sender, EventArgs e)
         {
-            BaseViewModel.Instance().Mode = InteractionMode.Sound;
+            if (swSoundMode.IsToggled)
+            {
+                BaseViewModel.Instance().Mode = InteractionMode.Sound;
+            }
+            else
+            {
+                BaseViewModel.Instance().Mode = InteractionMode.Silent;
+            }
+            BaseViewModel.Instance().InitAlgorithmBase(StepSize.Big);
             Application.Current.MainPage = new MasterTabbedPage();
         }
     }

@@ -9,15 +9,26 @@
                 VerticalOptions="Start" 
                 HorizontalOptions="CenterAndExpand"
                 Margin="40"
-                FontSize="Large"/>
+                FontSize="Medium"/>
             <Label Text="Please select interaction mode"
                    VerticalOptions="Start"
                    HorizontalOptions="CenterAndExpand"
                    Margin="20"
-                   FontSize="Medium"/>
-            <Button Text="Silent"
+                   FontSize="Small"/>
+            <StackLayout
+                Orientation="Horizontal"
+                HorizontalOptions="CenterAndExpand">
+                <Label Text="Sound alerts"
+                       VerticalOptions="Start"
+                       HorizontalOptions="CenterAndExpand"
+                       Margin="20"
+                       FontSize="Small"/>
+                <Switch x:Name="swSoundMode"
+                        HorizontalOptions="Center"/>
+            </StackLayout>
+            <Button Text="Small Steps"
                     Clicked="SilentButton_Clicked" />
-            <Button Text="Sound"
+            <Button Text="Big Steps"
                     Clicked="SoundButton_Clicked"/>
         </StackLayout>
     </ContentPage.Content>

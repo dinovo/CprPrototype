@@ -5,6 +5,6 @@
             x:Class="CprPrototype.View.MasterTabbedPage">
   <!--Pages can be added as references or inline-->
     <local:CPRPage/>
-    <ContentPage Title="Overview" />
-  <ContentPage Title="Log" />
+    <local:OverviewPage/>
+    <local:ExtraDrugs/>
 </TabbedPage>

@@ -14,6 +14,18 @@ namespace CprPrototype.View
 		{
 			InitializeComponent ();
             BindingContext = viewModel;
+
+            // ListView
+            DataTemplate template = new DataTemplate(typeof(DrugCell));
+            template.SetBinding(DrugCell.NameProperty, "DrugDoseString");
+            template.SetBinding(DrugCell.TimeRemainingProperty, "TimeRemainingString");
+            template.SetBinding(DrugCell.ButtonCommandProperty, "DrugCommand");
+
+            listView.HasUnevenRows = true;
+            listView.ItemTemplate = template;
+            listView.ItemsSource = viewModel.DoseQueue;
+            listView.BindingContext = viewModel;
+
             UpdateUI();
 		}
 
@@ -22,18 +34,30 @@ namespace CprPrototype.View
         /// </summary>
         private void UpdateUI()
         {
+            if (viewModel.CurrentPosition.NextStep == viewModel.Algorithm.FirstStep)
+            {
+                btnNextStep.Text = "Done";
+            }
+            else
+            {
+                btnNextStep.Text = "Next Step";
+            }
+
             if (viewModel.Algorithm.FirstStep == viewModel.Algorithm.CurrentStep)
             {
                 btnShockable.IsVisible = true;
                 btnNShockable.IsVisible = true;
                 btnNextStep.IsVisible = false;
+                lblStepTime.IsVisible = false;
             }
             else
             {
                 btnShockable.IsVisible = false;
                 btnNShockable.IsVisible = false;
                 btnNextStep.IsVisible = true;
+                lblStepTime.IsVisible = true;
             }
+
         }
 
         /// <summary>
@@ -44,6 +68,7 @@ namespace CprPrototype.View
         private void ShockableButton_Clicked(object sender, EventArgs e)
         {
             viewModel.Algorithm.BeginSequence(Model.RythmStyle.Shockable);
+            viewModel.Algorithm.AddDrugsToQueue(viewModel.DoseQueue, Model.RythmStyle.Shockable);
             viewModel.AdvanceAlgorithm();
             UpdateUI();
         }
@@ -56,6 +81,7 @@ namespace CprPrototype.View
         private void NShockableButton_Clicked(object sender, EventArgs e)
         {
             viewModel.Algorithm.BeginSequence(Model.RythmStyle.NonShockable);
+            viewModel.Algorithm.AddDrugsToQueue(viewModel.DoseQueue, Model.RythmStyle.NonShockable);
             viewModel.AdvanceAlgorithm();
             UpdateUI();
         }

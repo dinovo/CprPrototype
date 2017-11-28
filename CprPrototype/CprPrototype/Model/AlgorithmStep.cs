@@ -33,6 +33,11 @@ namespace CprPrototype.Model
         /// </summary>
         public AlgorithmStep NextStep { get; set; }
 
+        /// <summary>
+        /// Represents the style of the assessed rythm.
+        /// </summary>
+        public RythmStyle? RythmStyle { get; set; }
+
         #endregion
 
         #region Construction & Initialization
@@ -67,6 +72,7 @@ namespace CprPrototype.Model
             this.Description = null;
             this.NextStep = null;
             this.PreviousStep = null;
+            this.RythmStyle = null;
         }
 
         #endregion

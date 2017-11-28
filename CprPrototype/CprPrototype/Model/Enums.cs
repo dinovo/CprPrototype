@@ -8,7 +8,28 @@ namespace CprPrototype.Model
 {
    public enum InteractionMode
    {
-        Silent = 0,
-        Sound = 1
+        Silent,
+        Sound
    }
+
+   public enum StepSize
+    {
+        Small,
+        Big
+    }
+
+   public enum DrugType
+    {
+        Adrenalin,
+        Amiodaron,
+        Bikarbonat,
+        Calcium,
+        Magnesium
+    }
+
+    public enum DrugDoseTarget
+    {
+        Adult,
+        Children
+    }
 }

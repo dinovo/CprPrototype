@@ -19,11 +19,6 @@ namespace CprPrototype.Model
         public AlgorithmStep CircRestoredStep { get; set; }
 
         /// <summary>
-        /// Represents the style of the assessed rythm.
-        /// </summary>
-        public RythmStyle? RythmStyle { get; set; }
-
-        /// <summary>
         /// Constructor.
         /// </summary>
         /// <remarks>

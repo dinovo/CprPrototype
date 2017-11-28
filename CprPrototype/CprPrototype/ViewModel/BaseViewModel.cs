@@ -1,7 +1,9 @@
-﻿using CprPrototype.Model;
+﻿using AdvancedTimer.Forms.Plugin.Abstractions;
+using CprPrototype.Model;
+using CprPrototype.Service;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Xamarin.Forms;
 
@@ -20,65 +22,19 @@ namespace CprPrototype.ViewModel
 
         private static BaseViewModel instance;
         private AlgorithmBase algoBase;
+        private CPRHistory history = new CPRHistory();
 
-        private string stepName, stepDescription;
+        private ObservableCollection<DrugShot> doseQueue = new ObservableCollection<DrugShot>();
         private AlgorithmStep currStep;
         private TimeSpan totalTime, stepTime;
+        private int cycles;
 
-        
+        private IAdvancedTimer timer = DependencyService.Get<IAdvancedTimer>();
+        private bool timerStarted = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        // Shared Bindable properties for our views
-        public static readonly BindableProperty stepNameProperty = BindableProperty.Create(nameof(StepName), typeof(string), typeof(BaseViewModel));
-        public static readonly BindableProperty stepDescriptionProperty = BindableProperty.Create(nameof(StepDescription), typeof(string), typeof(BaseViewModel));
-        public static readonly BindableProperty nextStepProperty = BindableProperty.Create(nameof(CurrentPosition), typeof(AlgorithmStep), typeof(BaseViewModel));
-
-        /// <summary>
-        /// StepNameProperty accessor.
-        /// </summary>
-        public string StepName
-        {
-            get
-            {
-                return stepName;
-            }
-            set
-            {
-                if (stepName != value)
-                {
-                    stepName = value;
-                    
-                    if (PropertyChanged != null)
-                    {
-                        OnPropertyChanged("StepName");
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// StepDescriptionProperty accessor.
-        /// </summary>
-        public string StepDescription
-        {
-            get
-            {
-                return stepDescription;
-            }
-            set
-            {
-                if (stepDescription != value)
-                {
-                    stepDescription = value;
-
-                    if (PropertyChanged != null)
-                    {
-                        OnPropertyChanged("StepDescription");
-                    }
-                }
-            }
-        }
+        public event EventHandler TimerElapsed;
+        
 
         /// <summary>
         /// NextStepProperty accessor.
@@ -144,9 +100,66 @@ namespace CprPrototype.ViewModel
         }
 
         /// <summary>
+        /// Returns the current dose queue.
+        /// </summary>
+        public ObservableCollection<DrugShot> DoseQueue
+        {
+            get
+            {
+                return doseQueue;
+            }
+            set
+            {
+                if (doseQueue != value)
+                {
+                    if (PropertyChanged != null)
+                    {
+                        OnPropertyChanged("DoseQueue");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the total number of cycles we went through;
+        /// </summary>
+        public int Cycles
+        {
+            get { return cycles; }
+            set
+            {
+                if (cycles != value)
+                {
+                    cycles = value;
+
+                    if (PropertyChanged != null)
+                    {
+                        OnPropertyChanged("Cycles");
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the CPRHistory instance.
+        /// </summary>
+        public CPRHistory History
+        {
+            get { return history; }
+        }
+
+        public StepSize StepSize { get; set; }
+
+        /// <summary>
+        /// The Timer object.
+        /// </summary>
+        public IAdvancedTimer Timer { get { return timer; } }
+
+        /// <summary>
         /// The Algorithm Model.
         /// </summary>
         public AlgorithmBase Algorithm { get { return algoBase; } }
+
 
         public InteractionMode Mode { get; set; }
 
@@ -159,8 +172,69 @@ namespace CprPrototype.ViewModel
         /// </summary>
         protected BaseViewModel()
         {
-            // Init our algorithm base
-            this.algoBase = new AlgorithmBase();
+           
+        }
+
+        public void InitAlgorithmBase(StepSize size)
+        {
+            StepSize = size;
+            algoBase = new AlgorithmBase(size);
+            CurrentPosition = algoBase.CurrentStep;
+        }
+
+        /// <summary>
+        /// TimerElapsed event handler.
+        /// </summary>
+        /// <param name="sender">Sender</param>
+        /// <param name="e">Arguments</param>
+        private void OnTimerElapsed(object sender, EventArgs e)
+        {
+            // Update Total Time
+            TotalTime = TimeSpan.FromSeconds(DateTime.Now.Subtract(Algorithm.StartTime.Value).TotalSeconds);
+
+            // Update Step Time
+            if (CurrentPosition.GetType().Equals(typeof(AssessmentStep)))
+            {
+                Algorithm.StepTime = TimeSpan.FromMinutes(2);
+                StepTime = Algorithm.StepTime;
+            }
+            else
+            {
+                Algorithm.StepTime = Algorithm.StepTime.Subtract(TimeSpan.FromSeconds(1));
+                StepTime = Algorithm.StepTime;
+            }
+
+            // Update Cycles
+            Cycles = Algorithm.Cycles;
+
+            // Update Drug Queue
+            ObservableCollection<DrugShot> list = new ObservableCollection<DrugShot>();
+            foreach (DrugShot shot in DoseQueue)
+            {
+                if (Cycles == 0 && CurrentPosition.NextStep.RythmStyle == RythmStyle.NonShockable 
+                    && shot.Drug.DrugType == DrugType.Adrenalin && shot.TimeRemaining.TotalMinutes > TimeSpan.FromMinutes(2).TotalMinutes)
+                {
+                    shot.TimeRemaining = TimeSpan.FromMinutes(2);
+                }
+
+                shot.TimeRemaining = shot.TimeRemaining.Subtract(TimeSpan.FromSeconds(1));
+
+                if (shot.TimeRemaining.TotalSeconds == 0 || shot.Injected)
+                {
+                    shot.ShotAddressed();
+                    History.AddItem(shot.DrugDoseString);
+                    Algorithm.RemoveDrugsFromQueue(DoseQueue);
+                }
+
+                list.Add(shot);
+            }
+
+            DoseQueue.Clear();
+            
+            foreach (var item in list)
+            {
+                DoseQueue.Add(item);
+            }
         }
 
         /// <summary>
@@ -189,6 +263,29 @@ namespace CprPrototype.ViewModel
         /// </summary>
         public void AdvanceAlgorithm()
         {
+            if (!timerStarted)
+            {
+                timerStarted = true;
+                Timer.initTimer(1000, OnTimerElapsed, true);
+                Timer.startTimer();
+            }
+
+            if (CurrentPosition.Equals(Algorithm.FirstStep))
+            {
+                if (CurrentPosition.NextStep.RythmStyle == RythmStyle.Shockable)
+                {
+                    History.AddItem("Rythm Identified - Shockable");
+                }
+                else
+                {
+                    History.AddItem("Rythm Identified - Non-Shockable");
+                }
+            }
+            else
+            {
+                History.AddItem(CurrentPosition.Name);
+            }
+
             Algorithm.AdvanceOneStep();
             CurrentPosition = Algorithm.CurrentStep;
         }
@@ -203,14 +300,11 @@ namespace CprPrototype.ViewModel
             if (handler != null)
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
-                Debug.WriteLine("PropertyChanged - " + propertyName);
+                //Debug.WriteLine("PropertyChanged - " + propertyName);
 
                 if (propertyName.Equals("CurrentStep") && Algorithm.CurrentStep != null)
                 {
                     CurrentPosition = Algorithm.CurrentStep;
-
-                    StepName = CurrentPosition.Name;
-                    StepDescription = CurrentPosition.Description;
                 }
             }
         }
