@@ -160,19 +160,19 @@ namespace CprPrototype.Model
                     result.Add(step1);
                     result.Add(smallShock1);
                     result.Add(smallShock2);
-                    result.Add(smallNShock2);
                     result.Add(smallNShock1);
+                    result.Add(smallNShock2);
                     result.Add(exit1);
                     break;
                 case StepSize.Big:
                     // Shockable Steps
-                    smallShock1 = new AlgorithmStep("Shock once", "Continue HLR for");
+                    smallShock1 = new AlgorithmStep("Shock once", "Continue HLR");
                     smallShock1.RythmStyle = RythmStyle.Shockable;
 
                     // Non-Shockable Steps
-                    smallNShock1 = new AlgorithmStep("Give 1mg Adrenaline", "Continue HLR for");
+                    smallNShock1 = new AlgorithmStep("Give 1mg Adrenaline", "Continue HLR");
                     smallNShock1.RythmStyle = RythmStyle.NonShockable;
-                    smallNShock2 = new AlgorithmStep("Continue HLR for", "");
+                    smallNShock2 = new AlgorithmStep("Continue HLR", "");
                     smallNShock2.RythmStyle = RythmStyle.NonShockable;
 
                     // Setup Step Relations
@@ -272,9 +272,9 @@ namespace CprPrototype.Model
             {
                 if (stepSize == StepSize.Small)
                 { 
-                    smallNShock1.PreviousStep = step1;
-                    smallNShock1.NextStep = step1;
-                    steps.Remove(smallNShock2);
+                    smallNShock2.PreviousStep = step1;
+                    smallNShock2.NextStep = step1;
+                    steps.Remove(smallNShock1);
                 }
                 else
                 {
@@ -290,7 +290,14 @@ namespace CprPrototype.Model
                     CurrentStep.NextStep = smallShock1;
                     break;
                 case RythmStyle.NonShockable:
+                    if (stepSize == StepSize.Big)
+                    {
                         CurrentStep.NextStep = steps[2];
+                    }
+                    else
+                    {
+                        CurrentStep.NextStep = steps[3];
+                    }
                     break;
             }
         }

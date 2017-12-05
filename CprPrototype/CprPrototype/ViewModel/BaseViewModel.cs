@@ -1,6 +1,7 @@
 ﻿using AdvancedTimer.Forms.Plugin.Abstractions;
 using CprPrototype.Model;
 using CprPrototype.Service;
+using Plugin.Vibrate;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -198,7 +199,8 @@ namespace CprPrototype.ViewModel
                 Algorithm.StepTime = TimeSpan.FromMinutes(2);
                 StepTime = Algorithm.StepTime;
             }
-            else
+            else if (CurrentPosition.Name == "HLR 2 Minutes" || CurrentPosition.Name == "Continue HLR" 
+                || CurrentPosition.Description == "Continue HLR")
             {
                 Algorithm.StepTime = Algorithm.StepTime.Subtract(TimeSpan.FromSeconds(1));
                 StepTime = Algorithm.StepTime;
@@ -234,6 +236,17 @@ namespace CprPrototype.ViewModel
             foreach (var item in list)
             {
                 DoseQueue.Add(item);
+
+                if (item.TimeRemaining.TotalSeconds < 16)
+                {
+                    CrossVibrate.Current.Vibration(TimeSpan.FromSeconds(0.25));
+
+                    if (Mode == InteractionMode.Sound)
+                    {
+                        // Play Sound
+                        DependencyService.Get<IAudio>().PlayMp3File();
+                    }
+                }
             }
         }
 

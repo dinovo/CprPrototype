@@ -9,6 +9,7 @@ namespace CprPrototype.View
 	public partial class CPRPage : ContentPage
 	{
         private BaseViewModel viewModel = BaseViewModel.Instance();
+        private bool bigStepShocked = false;
 
 		public CPRPage ()
 		{
@@ -26,7 +27,7 @@ namespace CprPrototype.View
             listView.ItemsSource = viewModel.DoseQueue;
             listView.BindingContext = viewModel;
 
-            UpdateUI();
+           UpdateUI();
 		}
 
         /// <summary>
@@ -34,17 +35,66 @@ namespace CprPrototype.View
         /// </summary>
         private void UpdateUI()
         {
-            if (viewModel.CurrentPosition.NextStep == viewModel.Algorithm.FirstStep)
+            var currStep = viewModel.CurrentPosition;
+
+            if (viewModel.StepSize == Model.StepSize.Small)
             {
-                btnNextStep.Text = "Done";
+                if (currStep.Name == "Shock once")
+                {
+                    lblStepTime.IsVisible = false;
+                    lblDescription.IsVisible = true;
+                }
+                else if (currStep.Name == "HLR 2 Minutes")
+                {
+                    lblDescription.IsVisible = false;
+                    lblStepTime.IsVisible = true;
+                }
+
+                if (currStep.NextStep != null)
+                {
+                    btnNextStep.Text = currStep.NextStep.Name ?? "Assess Rythm";
+                }
             }
-            else
+            else if(viewModel.StepSize == Model.StepSize.Big)
             {
-                btnNextStep.Text = "Next Step";
+                if (currStep.RythmStyle == Model.RythmStyle.Shockable)
+                {
+                    if (!bigStepShocked)
+                    {
+                        lblName.IsVisible = true;
+                        lblDescription.IsVisible = false;
+                        lblStepTime.IsVisible = false;
+                        btnNextStep.Text = "Shocked Once";
+                    }
+                    else
+                    {
+                        lblName.IsVisible = false;
+                        lblDescription.IsVisible = false;
+                        lblStepTime.IsVisible = true;
+
+                        if (currStep.NextStep != null)
+                        {
+                            btnNextStep.Text = currStep.NextStep.Name ?? "Assess Rythm";
+                        }
+                    } 
+                }
+                else if (currStep.RythmStyle == Model.RythmStyle.NonShockable)
+                {
+                    if (viewModel.Cycles > 0)
+                    {
+                        lblName.IsVisible = false;
+                    }
+
+                    lblName.IsVisible = true;
+                    lblDescription.IsVisible = false;
+                    lblStepTime.IsVisible = true;
+                }
             }
 
             if (viewModel.Algorithm.FirstStep == viewModel.Algorithm.CurrentStep)
             {
+                lblName.IsVisible = true;
+                lblDescription.IsVisible = true;
                 btnShockable.IsVisible = true;
                 btnNShockable.IsVisible = true;
                 btnNextStep.IsVisible = false;
@@ -55,7 +105,6 @@ namespace CprPrototype.View
                 btnShockable.IsVisible = false;
                 btnNShockable.IsVisible = false;
                 btnNextStep.IsVisible = true;
-                lblStepTime.IsVisible = true;
             }
 
         }
@@ -74,7 +123,7 @@ namespace CprPrototype.View
         }
 
         /// <summary>
-        /// Handler for Silent Button clicked event.
+        /// Handler for NonShockable Button clicked event.
         /// </summary>
         /// <param name="sender">Sender</param>
         /// <param name="e">Args</param>
@@ -87,13 +136,34 @@ namespace CprPrototype.View
         }
 
         /// <summary>
-        /// Handler for Silent Button clicked event.
+        /// Handler for Shockable Button clicked event.
         /// </summary>
         /// <param name="sender">Sender</param>
         /// <param name="e">Args</param>
         private void NextStepButton_Clicked(object sender, EventArgs e)
         {
-            viewModel.AdvanceAlgorithm();
+            if (bigStepShocked == false && viewModel.StepSize == Model.StepSize.Big 
+                && viewModel.CurrentPosition.RythmStyle == Model.RythmStyle.Shockable)
+            {
+                bigStepShocked = true;
+                UpdateUI();
+            }
+            else
+            {
+                viewModel.AdvanceAlgorithm();
+                UpdateUI();
+                bigStepShocked = false;
+            }
+        }
+        
+        /// <summary>
+        /// Handler for NStep button clicked, to handle big steps
+        /// in shockable rythm.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnNextStep_Clicked(object sender, EventArgs e)
+        {
             UpdateUI();
         }
     }
