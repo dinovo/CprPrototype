@@ -206,6 +206,17 @@ namespace CprPrototype.ViewModel
                 {
                     Algorithm.StepTime = Algorithm.StepTime.Subtract(TimeSpan.FromSeconds(1));
                     StepTime = Algorithm.StepTime; 
+
+                    if (StepTime.TotalSeconds < 21)
+                    {
+                        CrossVibrate.Current.Vibration(TimeSpan.FromSeconds(0.25));
+
+                        if (Mode == InteractionMode.Sound)
+                        {
+                            // Play Sound
+                            DependencyService.Get<IAudio>().PlayMp3File(2);
+                        }
+                    }
                 }
             }
 

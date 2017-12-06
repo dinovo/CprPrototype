@@ -59,27 +59,27 @@ namespace CprPrototype.View
             }
             else if(viewModel.StepSize == Model.StepSize.Big)
             {
-                if (currStep.RythmStyle == Model.RythmStyle.Shockable)
-                {
-                    if (!bigStepShocked)
-                    {
-                        lblName.IsVisible = true;
-                        lblDescription.IsVisible = false;
-                        lblStepTime.IsVisible = false;
-                        btnNextStep.Text = "Stødt en gang";
-                    }
-                    else
-                    {
-                        lblName.IsVisible = false;
-                        lblDescription.IsVisible = false;
-                        lblStepTime.IsVisible = true;
+                //if (currStep.RythmStyle == Model.RythmStyle.Shockable)
+                //{
+                //    if (!bigStepShocked)
+                //    {
+                lblName.IsVisible = true;
+                lblDescription.IsVisible = false;
+                lblStepTime.IsVisible = true;
+                //        btnNextStep.Text = "Stødt en gang";
+                //    }
+                //    else
+                //    {
+                //        lblName.IsVisible = false;
+                //        lblDescription.IsVisible = false;
+                //        lblStepTime.IsVisible = true;
 
-                        if (currStep.NextStep != null)
-                        {
-                            btnNextStep.Text = currStep.NextStep.Name ?? "Vurder Rytmen";
-                        }
-                    } 
+                if (currStep.NextStep != null)
+                {
+                    btnNextStep.Text = currStep.NextStep.Name ?? "Vurder Rytmen";
                 }
+                //    } 
+            }
                 else if (currStep.RythmStyle == Model.RythmStyle.NonShockable)
                 {
                     if (viewModel.Cycles > 0)
@@ -91,7 +91,7 @@ namespace CprPrototype.View
                     lblDescription.IsVisible = false;
                     lblStepTime.IsVisible = true;
                 }
-            }
+            //}
 
             if (viewModel.Algorithm.FirstStep == viewModel.Algorithm.CurrentStep)
             {
@@ -144,18 +144,18 @@ namespace CprPrototype.View
         /// <param name="e">Args</param>
         private void NextStepButton_Clicked(object sender, EventArgs e)
         {
-            if (bigStepShocked == false && viewModel.StepSize == Model.StepSize.Big 
-                && viewModel.CurrentPosition.RythmStyle == Model.RythmStyle.Shockable)
-            {
-                bigStepShocked = true;
-                UpdateUI();
-            }
-            else
-            {
+            //if (bigStepShocked == false && viewModel.StepSize == Model.StepSize.Big 
+            //    && viewModel.CurrentPosition.RythmStyle == Model.RythmStyle.Shockable)
+            //{
+            //    bigStepShocked = true;
+            //    UpdateUI();
+            //}
+            //else
+            //{
                 viewModel.AdvanceAlgorithm();
                 UpdateUI();
                 bigStepShocked = false;
-            }
+            //}
         }
         
         /// <summary>
