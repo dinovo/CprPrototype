@@ -13,10 +13,18 @@ namespace CprPrototype.Droid.Service
 
         private MediaPlayer _mediaPlayer;
 
-        public bool PlayMp3File()
+        public bool PlayMp3File(int i)
         {
-            _mediaPlayer = MediaPlayer.Create(global::Android.App.Application.Context, Resource.Raw.beep1);
-            _mediaPlayer.Start();
+            if (i == 1)
+            {
+                _mediaPlayer = MediaPlayer.Create(global::Android.App.Application.Context, Resource.Raw.beep1);
+                _mediaPlayer.Start();
+            }
+            else
+            {
+                _mediaPlayer = MediaPlayer.Create(global::Android.App.Application.Context, Resource.Raw.beep2);
+                _mediaPlayer.Start();
+            }
 
             return true;
         }

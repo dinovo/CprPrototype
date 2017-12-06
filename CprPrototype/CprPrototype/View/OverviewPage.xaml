@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CprPrototype.View.OverviewPage"
-             Title="Overview">
+             Title="Oversigt">
     <ContentPage.Content>
         <StackLayout>
             <StackLayout 
@@ -18,16 +18,28 @@
                     Margin="5"
                     FontSize="Large"/>
                 <Label
-                    Text="{Binding Cycles, StringFormat='{0} Cycles'}"
+                    Text="{Binding Cycles, StringFormat='{0} Cykler'}"
                     VerticalOptions="Start"
                     HorizontalOptions="Fill"
                     Margin="5"
                     FontSize="Large"/>
             </StackLayout>
-            <ListView x:Name="listView"
+            <StackLayout HorizontalOptions="Fill"
+                         VerticalOptions="Fill"
+                         Margin="0,5,0,0"
+                         Spacing="0">
+                <StackLayout HorizontalOptions="Fill">
+                    <Label Text="Historie"
+                       FontSize="Small"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center"
+                       BackgroundColor="#00447B"/>
+                </StackLayout>
+                <ListView x:Name="listView"
                 VerticalOptions="StartAndExpand"
                 HorizontalOptions="CenterAndExpand" >
-            </ListView>
+                </ListView>
+            </StackLayout>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

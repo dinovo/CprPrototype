@@ -10,10 +10,14 @@ namespace CprPrototype.View
 
         Label lblName, lblTime;
         Button btnCommand;
+        StackLayout labelLayout, labelBtnLayout;
 
         public static readonly BindableProperty NameProperty = BindableProperty.Create(nameof(Name), typeof(string), typeof(DrugCell));
         public static readonly BindableProperty TimeRemainingProperty = BindableProperty.Create(nameof(Time), typeof(string), typeof(DrugCell));
         public static readonly BindableProperty ButtonCommandProperty = BindableProperty.Create(nameof(DrugInjectedCommand), typeof(ICommand), typeof(DrugCell));
+        public static readonly BindableProperty BackgroundColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(DrugCell), Color.LightGray);
+        public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(BackgroundColor), typeof(Color), typeof(DrugCell), Color.Black);
+
 
         public string Name
         {
@@ -33,6 +37,18 @@ namespace CprPrototype.View
             set { SetValue(TimeRemainingProperty, value); }
         }
 
+        public Color TextColor
+        {
+            get { return (Color)GetValue(TextColorProperty); }
+            set { SetValue(TextColorProperty, value); }
+        }
+
+        public Color BackgroundColor
+        {
+            get { return (Color)GetValue(BackgroundColorProperty); }
+            set { SetValue(BackgroundColorProperty, value); }
+        }
+
         #endregion
 
         #region Construct
@@ -42,26 +58,30 @@ namespace CprPrototype.View
             // Init Views
             lblName = new Label();
             lblTime = new Label();
+            lblTime.TextColor = TextColor;
             btnCommand = new Button();
-            btnCommand.Text = "OK";
-            btnCommand.WidthRequest = 60;
+            btnCommand.Text = "Givet";
+            btnCommand.WidthRequest = 70;
             //btnCommand.HeightRequest = 15;
             btnCommand.HorizontalOptions = LayoutOptions.End;
 
-            var labelLayout = new StackLayout
+            labelLayout = new StackLayout
             {
                 Spacing = 2,
                 Margin = new Thickness(15, 0, 0, 0),
                 Orientation = StackOrientation.Vertical,
-                HorizontalOptions = LayoutOptions.StartAndExpand
+                HorizontalOptions = LayoutOptions.StartAndExpand,
+                BackgroundColor = BackgroundColor
             };
             labelLayout.Children.Add(lblName);
             labelLayout.Children.Add(lblTime);
 
-            var labelBtnLayout = new StackLayout
+            labelBtnLayout = new StackLayout
             {
                 Spacing = 2,
-                Orientation = StackOrientation.Horizontal
+                Margin = new Thickness(3),
+                Orientation = StackOrientation.Horizontal,
+                BackgroundColor = BackgroundColor
             };
             labelBtnLayout.Children.Add(labelLayout);
             labelBtnLayout.Children.Add(btnCommand);
@@ -83,8 +103,12 @@ namespace CprPrototype.View
             if (BindingContext != null)
             {
                 lblName.Text = Name;
+                lblName.TextColor = TextColor;
                 lblTime.Text = Time;
+                lblTime.TextColor = TextColor;
                 btnCommand.Command = DrugInjectedCommand;
+                labelLayout.BackgroundColor = BackgroundColor;
+                labelBtnLayout.BackgroundColor = BackgroundColor;
             }
         }
     }

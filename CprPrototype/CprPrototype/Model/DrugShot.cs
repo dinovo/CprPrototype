@@ -23,6 +23,41 @@ namespace CprPrototype.Model
         public string Dose { get; set; }
         public bool Injected { get; set; }
         public ICommand DrugCommand { get; set; }
+        public Color TextColor
+        {
+            get
+            {
+                return Color.Black;
+            }
+        }
+
+        public Color BackgroundColor
+        {
+            get
+            {
+                //Success Color
+                if (Injected)
+                {
+                    return Color.FromHex("A6CE38");
+                }
+
+                // Default Color
+                if (timeRemaining.TotalSeconds > 120)
+                {
+                    return Color.LightGray;
+                }
+                // Warning Color
+                else if (TimeRemaining.TotalSeconds > 15 && TimeRemaining.TotalSeconds <= 120)
+                {
+                    return Color.FromHex("#f1c40f");
+                }
+                else
+                {
+                    return Color.FromHex("#e74c3c");
+                }
+                
+            }
+        }
 
         public string DrugDoseString
         {
@@ -31,9 +66,23 @@ namespace CprPrototype.Model
                 switch (Drug.DrugType)
                 {
                     case DrugType.Adrenalin:
-                        return DrugType.Adrenalin.ToString() + " " + Dose;
+                        if (TimeRemaining.TotalSeconds <= 120)
+                        {
+                            return "Giv " + DrugType.Adrenalin.ToString() + " " + Dose;
+                        }
+                        else
+                        {
+                            return "Klargør " + DrugType.Adrenalin.ToString() + " " + Dose;
+                        }
                     case DrugType.Amiodaron:
-                        return DrugType.Amiodaron.ToString() + " " + Dose;
+                        if (TimeRemaining.TotalSeconds <= 120)
+                        {
+                            return "Giv " + DrugType.Amiodaron.ToString() + " " + Dose;
+                        }
+                        else
+                        {
+                            return "Klargør " + DrugType.Amiodaron.ToString() + " " + Dose;
+                        }
                     case DrugType.Bikarbonat:
                         return DrugType.Bikarbonat.ToString() + " " + Dose;
                     case DrugType.Calcium:

@@ -17,6 +17,7 @@ namespace CprPrototype.View
             DataTemplate template = new DataTemplate(typeof(TextCell));
             template.SetBinding(TextCell.TextProperty, "Name");
             template.SetBinding(TextCell.DetailProperty, "Date");
+            template.SetValue(TextCell.TextColorProperty, Color.FromHex("A6CE38"));
 
             listView.ItemTemplate = template;
             listView.BindingContext = viewModel;

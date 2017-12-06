@@ -12,9 +12,9 @@ namespace CprPrototype.Model
         /// <summary>
         /// Creates a list of Drugs, including dosage for each drug.
         /// </summary>
-        /// <param name="prepTimeMinutes">Optional - Drug Prep Time in Minutes. (Default = 4.0)</param>
+        /// <param name="prepTimeMinutes">Optional - Drug Prep Time in Minutes. (Default = 5.0)</param>
         /// <returns>List of Drugs</returns>
-        public List<Drug> CreateDrugs(double prepTimeMinutes = 4)
+        public List<Drug> CreateDrugs(double prepTimeMinutes = 5)
         {
             var result = new List<Drug>();
             var prepTime = TimeSpan.FromMinutes(prepTimeMinutes);

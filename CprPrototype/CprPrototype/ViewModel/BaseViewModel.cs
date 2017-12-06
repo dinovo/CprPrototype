@@ -199,11 +199,14 @@ namespace CprPrototype.ViewModel
                 Algorithm.StepTime = TimeSpan.FromMinutes(2);
                 StepTime = Algorithm.StepTime;
             }
-            else if (CurrentPosition.Name == "HLR 2 Minutes" || CurrentPosition.Name == "Continue HLR" 
-                || CurrentPosition.Description == "Continue HLR")
+            else if (CurrentPosition.Name == "HLR 2 Minutter" || CurrentPosition.Name == "Fortsæt HLR"
+                || CurrentPosition.Description == "Fortsæt HLR")
             {
-                Algorithm.StepTime = Algorithm.StepTime.Subtract(TimeSpan.FromSeconds(1));
-                StepTime = Algorithm.StepTime;
+                if (Algorithm.StepTime.TotalSeconds > 0)
+                {
+                    Algorithm.StepTime = Algorithm.StepTime.Subtract(TimeSpan.FromSeconds(1));
+                    StepTime = Algorithm.StepTime; 
+                }
             }
 
             // Update Cycles
@@ -219,9 +222,12 @@ namespace CprPrototype.ViewModel
                     shot.TimeRemaining = TimeSpan.FromMinutes(2);
                 }
 
-                shot.TimeRemaining = shot.TimeRemaining.Subtract(TimeSpan.FromSeconds(1));
+                if (shot.TimeRemaining.TotalSeconds > 0)
+                {
+                    shot.TimeRemaining = shot.TimeRemaining.Subtract(TimeSpan.FromSeconds(1));
+                }
 
-                if (shot.TimeRemaining.TotalSeconds == 0 || shot.Injected)
+                if (shot.Injected)
                 {
                     shot.ShotAddressed();
                     History.AddItem(shot.DrugDoseString);
@@ -237,6 +243,19 @@ namespace CprPrototype.ViewModel
             {
                 DoseQueue.Add(item);
 
+                // Notify when we change from 'prep' drug to 'give' drug
+                if (item.TimeRemaining.TotalSeconds == 120)
+                {
+                    CrossVibrate.Current.Vibration(TimeSpan.FromSeconds(0.25));
+
+                    if (Mode == InteractionMode.Sound)
+                    {
+                        // Play Sound
+                        DependencyService.Get<IAudio>().PlayMp3File(1);
+                    }
+                }
+
+                // Notify constantly when drug timer is nearly done
                 if (item.TimeRemaining.TotalSeconds < 16)
                 {
                     CrossVibrate.Current.Vibration(TimeSpan.FromSeconds(0.25));
@@ -244,7 +263,7 @@ namespace CprPrototype.ViewModel
                     if (Mode == InteractionMode.Sound)
                     {
                         // Play Sound
-                        DependencyService.Get<IAudio>().PlayMp3File();
+                        DependencyService.Get<IAudio>().PlayMp3File(2);
                     }
                 }
             }
@@ -287,11 +306,11 @@ namespace CprPrototype.ViewModel
             {
                 if (CurrentPosition.NextStep.RythmStyle == RythmStyle.Shockable)
                 {
-                    History.AddItem("Rythm Identified - Shockable");
+                    History.AddItem("Rytme vurderet - Stødbar");
                 }
                 else
                 {
-                    History.AddItem("Rythm Identified - Non-Shockable");
+                    History.AddItem("Rytme vurderet - Ikke-Stødbar");
                 }
             }
             else

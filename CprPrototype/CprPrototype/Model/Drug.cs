@@ -45,7 +45,7 @@ namespace CprPrototype.Model
             {
                 case DrugType.Adrenalin:
 
-                    result = Doses[0];
+                    //result = Doses[0];
 
                     // Address adrenaline immediatelly on the
                     // first non-shockable step, then every
@@ -58,27 +58,28 @@ namespace CprPrototype.Model
                             {
                                 Injected = true;
                                 LastInjection = DateTime.Now.Add(TimeSpan.FromMinutes(2));
-                                return result;
+                                result = Doses[0];
                             }
                             // Then every 3-5 minutes
-                            else if (DateTime.Now.Subtract(LastInjection).TotalMinutes >= 3)
+                            else if (cycles >= 1 && DateTime.Now.Subtract(LastInjection).TotalMinutes >= 3)
                             {
-                                LastInjection = DateTime.Now.Add(PrepTime);
-                                return result;
+                                LastInjection = DateTime.Now.Add(TimeSpan.FromMinutes(3));
+                                result = Doses[0];
                             }
                             break;
                         case RythmStyle.Shockable:
                             // Address first time in Shockable after 3 cycles
-                            if (cycles >= 3 && Injected == false && cycles % 3 == 0)
+                            if (cycles >= 2 && Injected == false)
                             {
                                 Injected = true;
                                 LastInjection = DateTime.Now.Add(PrepTime);
-                                return result;
+                                result = Doses[0];
                             }
                             // Then every 3-5 minutes
-                            else if (DateTime.Now.Subtract(LastInjection).TotalMinutes >= 3)
+                            else if (cycles > 3 && DateTime.Now.Subtract(LastInjection).TotalMinutes >= 3)
                             {
-                                LastInjection = DateTime.Now.Add(PrepTime);
+                                result = Doses[0];
+                                LastInjection = DateTime.Now.Add(TimeSpan.FromMinutes(3));
                             }
                             break;
                     }

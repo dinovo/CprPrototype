@@ -21,6 +21,8 @@ namespace CprPrototype.View
             template.SetBinding(DrugCell.NameProperty, "DrugDoseString");
             template.SetBinding(DrugCell.TimeRemainingProperty, "TimeRemainingString");
             template.SetBinding(DrugCell.ButtonCommandProperty, "DrugCommand");
+            template.SetBinding(DrugCell.TextColorProperty, "TextColor");
+            template.SetBinding(DrugCell.BackgroundColorProperty, "BackgroundColor");
 
             listView.HasUnevenRows = true;
             listView.ItemTemplate = template;
@@ -39,12 +41,12 @@ namespace CprPrototype.View
 
             if (viewModel.StepSize == Model.StepSize.Small)
             {
-                if (currStep.Name == "Shock once")
+                if (currStep.Name == "Stød en gang")
                 {
                     lblStepTime.IsVisible = false;
                     lblDescription.IsVisible = true;
                 }
-                else if (currStep.Name == "HLR 2 Minutes")
+                else if (currStep.Name == "HLR 2 Minutter")
                 {
                     lblDescription.IsVisible = false;
                     lblStepTime.IsVisible = true;
@@ -52,7 +54,7 @@ namespace CprPrototype.View
 
                 if (currStep.NextStep != null)
                 {
-                    btnNextStep.Text = currStep.NextStep.Name ?? "Assess Rythm";
+                    btnNextStep.Text = currStep.NextStep.Name ?? "Vurder Rytmen";
                 }
             }
             else if(viewModel.StepSize == Model.StepSize.Big)
@@ -64,7 +66,7 @@ namespace CprPrototype.View
                         lblName.IsVisible = true;
                         lblDescription.IsVisible = false;
                         lblStepTime.IsVisible = false;
-                        btnNextStep.Text = "Shocked Once";
+                        btnNextStep.Text = "Stødt en gang";
                     }
                     else
                     {
@@ -74,7 +76,7 @@ namespace CprPrototype.View
 
                         if (currStep.NextStep != null)
                         {
-                            btnNextStep.Text = currStep.NextStep.Name ?? "Assess Rythm";
+                            btnNextStep.Text = currStep.NextStep.Name ?? "Vurder Rytmen";
                         }
                     } 
                 }

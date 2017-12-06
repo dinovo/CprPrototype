@@ -120,7 +120,7 @@ namespace CprPrototype.Model
             List<AlgorithmStep> result = new List<AlgorithmStep>();
 
             // Initial Step
-            step1 = new AssessmentStep("Rate the Rythm", "Rate the rythm of the patient.");
+            step1 = new AssessmentStep("Vurder Rytmen", "Vurder patientens rytme");
 
             // Exit Step
             exit1 = new AlgorithmStep("Circulation restored", "Continue with further resuscitation");
@@ -129,15 +129,15 @@ namespace CprPrototype.Model
             {
                 case StepSize.Small:
                     // Shockable Steps
-                    smallShock1 = new AlgorithmStep("Shock once", "Minimize interruptions");
+                    smallShock1 = new AlgorithmStep("Stød en gang", "Minimer afbrydelser");
                     smallShock1.RythmStyle = RythmStyle.Shockable;
-                    smallShock2 = new AlgorithmStep("HLR 2 Minutes", "Continue HLR for the remaining time");
+                    smallShock2 = new AlgorithmStep("HLR 2 Minutter", "Fortsæt HLR for den resterende tid");
                     smallShock2.RythmStyle = RythmStyle.Shockable;
 
                     // Non-Shockable Steps
-                    smallNShock1 = new AlgorithmStep("Give 1mg Adrenaline", "Immediately");
+                    smallNShock1 = new AlgorithmStep("Giv 1mg Adrenalin", "Med det samme");
                     smallNShock1.RythmStyle = RythmStyle.NonShockable;
-                    smallNShock2 = new AlgorithmStep("HLR 2 Minutes", "Continue HLR for the remaining time");
+                    smallNShock2 = new AlgorithmStep("HLR 2 Minutter", "Fortsæt HLR for den resterende tid");
                     smallNShock2.RythmStyle = RythmStyle.Shockable;
 
                     // Setup Step Relations
@@ -166,13 +166,13 @@ namespace CprPrototype.Model
                     break;
                 case StepSize.Big:
                     // Shockable Steps
-                    smallShock1 = new AlgorithmStep("Shock once", "Continue HLR");
+                    smallShock1 = new AlgorithmStep("Stød en gang", "Fortsæt HLR");
                     smallShock1.RythmStyle = RythmStyle.Shockable;
 
                     // Non-Shockable Steps
-                    smallNShock1 = new AlgorithmStep("Give 1mg Adrenaline", "Continue HLR");
+                    smallNShock1 = new AlgorithmStep("Giv 1mg Adrenalin", "Fortsæt HLR");
                     smallNShock1.RythmStyle = RythmStyle.NonShockable;
-                    smallNShock2 = new AlgorithmStep("Continue HLR", "");
+                    smallNShock2 = new AlgorithmStep("Fortsæt HLR ", "");
                     smallNShock2.RythmStyle = RythmStyle.NonShockable;
 
                     // Setup Step Relations
